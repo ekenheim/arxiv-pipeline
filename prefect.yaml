@@ -45,7 +45,9 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables: {}
+    job_variables:
+      env:
+        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src:$PYTHONPATH"
   schedules: []
 
 - name: daily-pipeline
@@ -68,7 +70,9 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables: {}
+    job_variables:
+      env:
+        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src:$PYTHONPATH"
   schedules: []
 
 - name: training-pipeline
@@ -85,5 +89,7 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables: {}
+    job_variables:
+      env:
+        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src:$PYTHONPATH"
   schedules: []
