@@ -21,9 +21,9 @@ pull:
 - prefect.deployments.steps.run_shell_script:
     id: install-deps
     stream_output: true
-    working_dir: ${clone-repo.repository_name}
     script: |
-      pip install -r requirements.txt
+      cd ${clone-repo.repository_name} && \
+      pip install -r requirements.txt && \
       pip install -e .
 
 # the deployments section allows you to provide configuration for deploying flows
