@@ -1,0 +1,45 @@
+# Arxiv Pipeline Configuration
+
+# Label definitions for classification
+labels:
+  - name: "interesting"
+    description: "Papers that are interesting to read"
+  - name: "technical"
+    description: "Technical papers with implementation details"
+  - name: "theoretical"
+    description: "Theoretical papers with mathematical foundations"
+  - name: "survey"
+    description: "Survey or review papers"
+  - name: "application"
+    description: "Applied research papers"
+
+# Model configuration
+model:
+  base_model: "sentence-transformers/all-MiniLM-L6-v2"
+  embedding_dim: 384
+  max_length: 512
+  batch_size: 16
+  learning_rate: 2e-5
+  num_epochs: 3
+
+# Training configuration
+training:
+  test_size: 0.2
+  validation_size: 0.1
+  min_samples_per_label: 5
+
+# MinIO storage configuration
+storage:
+  bucket_name: "arxiv-pipeline"
+  raw_data_path: "raw"
+  processed_data_path: "processed"
+  annotations_path: "annotations"
+  models_path: "models"
+  recommendations_path: "recommendations"
+
+# Data processing configuration
+data:
+  max_papers_per_day: 1000
+  sentence_separators: ["\n\n", ". ", "! ", "? "]
+  min_sentence_length: 10
+
