@@ -46,8 +46,7 @@ deployments:
     name: default
     work_queue_name: null
     job_variables:
-      env:
-        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src:$PYTHONPATH"
+      command: ["sh", "-c", "pip install -r requirements.txt && pip install -e . && python -m prefect.engine"]
   schedules: []
 
 - name: daily-pipeline
@@ -71,8 +70,7 @@ deployments:
     name: default
     work_queue_name: null
     job_variables:
-      env:
-        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src:$PYTHONPATH"
+      command: ["sh", "-c", "pip install -r requirements.txt && pip install -e . && python -m prefect.engine"]
   schedules: []
 
 - name: training-pipeline
@@ -90,6 +88,5 @@ deployments:
     name: default
     work_queue_name: null
     job_variables:
-      env:
-        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src:$PYTHONPATH"
+      command: ["sh", "-c", "pip install -r requirements.txt && pip install -e . && python -m prefect.engine"]
   schedules: []
