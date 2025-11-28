@@ -15,11 +15,15 @@ push: null
 # pull section allows you to provide instructions for cloning this project in remote locations
 pull:
 - prefect.deployments.steps.git_clone:
-    id: clone-repo
+    id: clone-step
     repository: https://github.com/ekenheim/arxiv-pipeline
     branch: master
-- prefect.deployments.steps.set_working_directory:
-    directory: "{{ clone-repo.directory }}"
+- prefect.deployments.steps.pip_install_requirements:
+    directory: "{{ clone-step.directory }}"
+    requirements_file: requirements.txt
+- prefect.deployments.steps.run_shell_script:
+    directory: "{{ clone-step.directory }}"
+    script: pip install -e .
 
 # the deployments section allows you to provide configuration for deploying flows
 deployments:
@@ -42,9 +46,7 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables:
-      env:
-        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src"
+    job_variables: {}
   schedules: []
 
 - name: daily-pipeline
@@ -67,9 +69,7 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables:
-      env:
-        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src"
+    job_variables: {}
   schedules: []
 
 - name: training-pipeline
@@ -86,7 +86,5 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables:
-      env:
-        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src"
+    job_variables: {}
   schedules: []
