@@ -21,8 +21,8 @@ pull:
 - prefect.deployments.steps.run_shell_script:
     id: install-deps
     stream_output: true
+    working_dir: ${clone-repo.repository_name}
     script: |
-      cd ${clone-repo.repository_name}
       pip install -r requirements.txt
       pip install -e .
 
