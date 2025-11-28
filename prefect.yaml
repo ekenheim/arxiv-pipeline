@@ -18,11 +18,8 @@ pull:
     id: clone-repo
     repository: https://github.com/ekenheim/arxiv-pipeline
     branch: master
-- prefect.deployments.steps.run_shell_script:
-    id: install-deps
-    stream_output: true
+- prefect.deployments.steps.set_working_directory:
     directory: "{{ clone-repo.directory }}"
-    script: sh -c "pwd && ls -la && pip install -r requirements.txt && pip install -e . && python -c 'import arxiv_pipeline; print(arxiv_pipeline)'"
 
 # the deployments section allows you to provide configuration for deploying flows
 deployments:
@@ -46,7 +43,8 @@ deployments:
     name: default
     work_queue_name: null
     job_variables:
-      command: ["sh", "-c", "pip install -r requirements.txt && pip install -e . && python -m prefect.engine"]
+      env:
+        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src"
   schedules: []
 
 - name: daily-pipeline
@@ -70,7 +68,8 @@ deployments:
     name: default
     work_queue_name: null
     job_variables:
-      command: ["sh", "-c", "pip install -r requirements.txt && pip install -e . && python -m prefect.engine"]
+      env:
+        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src"
   schedules: []
 
 - name: training-pipeline
@@ -88,5 +87,6 @@ deployments:
     name: default
     work_queue_name: null
     job_variables:
-      command: ["sh", "-c", "pip install -r requirements.txt && pip install -e . && python -m prefect.engine"]
+      env:
+        PYTHONPATH: "/opt/prefect/arxiv-pipeline-master/src"
   schedules: []
