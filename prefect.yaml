@@ -22,7 +22,7 @@ pull:
     id: install-deps
     stream_output: true
     directory: "{{ clone-repo.directory }}"
-    script: sh -c "pip install -r requirements.txt && pip install -e ."
+    script: sh -c "pwd && ls -la && pip install -r requirements.txt && pip install -e . && python -c 'import arxiv_pipeline; print(arxiv_pipeline)'"
 
 # the deployments section allows you to provide configuration for deploying flows
 deployments:
