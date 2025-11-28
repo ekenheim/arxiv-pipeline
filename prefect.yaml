@@ -22,7 +22,7 @@ pull:
     id: install-deps
     stream_output: true
     directory: "{{ clone-repo.directory }}"
-    script: pip install -r requirements.txt && pip install -e .
+    script: sh -c "pip install -r requirements.txt && pip install -e ."
 
 # the deployments section allows you to provide configuration for deploying flows
 deployments:
