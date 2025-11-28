@@ -18,16 +18,26 @@ def get_minio_client() -> Minio:
     
     try:
         # Try to load from Prefect block
-        credentials = MinIOCredentials.load("minio-credentials")
+        credentials = MinIOCredentials.load("arxiv-minio")
+        
+        # Extract endpoint from aws_client_parameters
+        endpoint_url = credentials.aws_client_parameters.get("endpoint_url", "localhost:9000")
+        # Remove https:// or http:// prefix
+        endpoint = endpoint_url.replace("https://", "").replace("http://", "")
+        
+        # Determine if secure based on endpoint_url
+        secure = endpoint_url.startswith("https://")
+        
         client = Minio(
-            credentials.minio_endpoint or os.getenv("MINIO_ENDPOINT", "localhost:9000"),
-            access_key=credentials.minio_root_user or os.getenv("MINIO_ACCESS_KEY", "minioadmin"),
-            secret_key=credentials.minio_root_password.get_secret_value() if hasattr(credentials.minio_root_password, 'get_secret_value') else os.getenv("MINIO_SECRET_KEY", "minioadmin"),
-            secure=os.getenv("MINIO_SECURE", "false").lower() == "true"
+            endpoint,
+            access_key=credentials.minio_root_user,
+            secret_key=credentials.minio_root_password.get_secret_value(),
+            secure=secure
         )
-        logger.info("Loaded MinIO credentials from Prefect block")
-    except Exception:
+        logger.info(f"Loaded MinIO credentials from Prefect block 'arxiv-minio' (endpoint: {endpoint}, secure: {secure})")
+    except Exception as e:
         # Fall back to environment variables
+        logger.warning(f"Could not load Prefect block 'arxiv-minio': {e}. Falling back to environment variables.")
         endpoint = os.getenv("MINIO_ENDPOINT", "localhost:9000")
         access_key = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
         secret_key = os.getenv("MINIO_SECRET_KEY", "minioadmin")
