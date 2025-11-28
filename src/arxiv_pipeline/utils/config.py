@@ -60,7 +60,8 @@ _config: PipelineConfig | None = None
 
 
 def load_config(config_path: str | None = None) -> PipelineConfig:
-    """Load configuration from YAML file."""
+    """Load configuration from YAML file, with environment variable overrides."""
+    import os
     global _config
     
     if _config is not None:
@@ -78,6 +79,12 @@ def load_config(config_path: str | None = None) -> PipelineConfig:
     
     with open(config_path, "r") as f:
         config_dict = yaml.safe_load(f)
+    
+    # Override storage bucket_name from environment variable if set
+    if "MINIO_BUCKET_NAME" in os.environ:
+        if "storage" not in config_dict:
+            config_dict["storage"] = {}
+        config_dict["storage"]["bucket_name"] = os.environ["MINIO_BUCKET_NAME"]
     
     _config = PipelineConfig(**config_dict)
     return _config

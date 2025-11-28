@@ -29,8 +29,9 @@ training:
   min_samples_per_label: 5
 
 # MinIO storage configuration
+# Note: bucket_name can be overridden by MINIO_BUCKET_NAME environment variable
 storage:
-  bucket_name: "arxiv-pipeline"
+  bucket_name: "arxiv"
   raw_data_path: "raw"
   processed_data_path: "processed"
   annotations_path: "annotations"

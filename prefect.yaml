@@ -1,0 +1,91 @@
+# Welcome to your prefect.yaml file! You can use this file for storing and managing
+# configuration for deploying your flows. We recommend committing this file to source
+# control along with your flow code.
+
+# Generic metadata about this project
+name: arxiv-pipeline
+prefect-version: 3.6.4
+
+# build section allows you to manage and build docker images
+build: null
+
+# push section allows you to manage if and how this project is uploaded to remote locations
+push: null
+
+# pull section allows you to provide instructions for cloning this project in remote locations
+pull:
+- prefect.deployments.steps.git_clone:
+    id: clone-repo
+    repository: https://github.com/ekenheim/arxiv-pipeline
+    branch: master
+- prefect.deployments.steps.run_shell_script:
+    id: install-deps
+    stream_output: true
+    script: |
+      cd ${clone-repo.repository_name}
+      pip install -r requirements.txt
+      pip install -e .
+
+# the deployments section allows you to provide configuration for deploying flows
+deployments:
+- name: arxiv-pipeline-orchestration
+  version: null
+  tags: []
+  concurrency_limit: null
+  description: |-
+    Main orchestration flow that coordinates all pipeline components.
+    Flexible flow with full control over each step.
+
+    Default behavior:
+    - Fetches and processes papers (fetch_data=True)
+    - Does NOT train models (train_models_flag=False)
+    - Generates recommendations (generate_recommendations_flag=True)
+
+    Use this for: Manual runs with custom parameters
+  entrypoint: src/arxiv_pipeline/flows/orchestration.py:arxiv_pipeline_orchestration
+  parameters: {}
+  work_pool:
+    name: default
+    work_queue_name: null
+    job_variables: {}
+  schedules: []
+
+- name: daily-pipeline
+  version: null
+  tags: []
+  concurrency_limit: null
+  description: |-
+    Daily pipeline that fetches new papers and generates recommendations.
+    Optimized for scheduled daily runs.
+
+    Default behavior:
+    - Fetches and processes papers
+    - Generates recommendations
+    - Can auto-train models if annotations exist (auto_train parameter)
+
+    Use this for: Scheduled daily runs
+  entrypoint: src/arxiv_pipeline/flows/orchestration.py:daily_pipeline
+  parameters:
+    auto_train: false  # Set to true to auto-train when annotations exist
+  work_pool:
+    name: default
+    work_queue_name: null
+    job_variables: {}
+  schedules: []
+
+- name: training-pipeline
+  version: null
+  tags: []
+  concurrency_limit: null
+  description: |-
+    Pipeline focused on model training only.
+    Trains embeddings and classifiers using existing annotations.
+
+    Use this for: Manual model training runs
+  entrypoint: src/arxiv_pipeline/flows/orchestration.py:training_pipeline
+  parameters: {}
+  work_pool:
+    name: default
+    work_queue_name: null
+    job_variables: {}
+  schedules: []
