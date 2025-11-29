@@ -24,7 +24,9 @@ pull:
 - prefect.deployments.steps.run_shell_script:
     id: install-package
     directory: "{{ clone-step.directory }}"
-    script: python -m pip install -e .
+    script: |
+      python -m pip install --upgrade pip setuptools wheel
+      python -m pip install .
     stream_output: true
 
 # the deployments section allows you to provide configuration for deploying flows
@@ -48,7 +50,9 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables: {}
+    job_variables:
+      env:
+        PYTHONPATH: "{{ clone-step.directory }}/src"
   schedules: []
 
 - name: daily-pipeline
@@ -71,7 +75,9 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables: {}
+    job_variables:
+      env:
+        PYTHONPATH: "{{ clone-step.directory }}/src"
   schedules: []
 
 - name: training-pipeline
@@ -88,5 +94,7 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables: {}
+    job_variables:
+      env:
+        PYTHONPATH: "{{ clone-step.directory }}/src"
   schedules: []
