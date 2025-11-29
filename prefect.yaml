@@ -19,11 +19,15 @@ pull:
     repository: https://github.com/ekenheim/arxiv-pipeline
     branch: master
 - prefect.deployments.steps.run_shell_script:
-    id: upgrade-prefect
+    id: set-prefect-version
     directory: "{{ clone-step.directory }}"
     script: |
-      echo "Upgrading Prefect to match server version..."
-      python -m pip install --upgrade "prefect>=3.6.4,<4.0.0"
+      echo "Current Prefect version:"
+      python -c "import prefect; print(prefect.__version__)" || echo "Prefect not found"
+      echo "Installing Prefect 3.4.14 to match server version..."
+      python -m pip install --force-reinstall --no-cache-dir "prefect>=3.4.14,<3.5.0"
+      echo "Prefect version after installation:"
+      python -c "import prefect; print(prefect.__version__)"
     stream_output: true
 - prefect.deployments.steps.pip_install_requirements:
     directory: "{{ clone-step.directory }}"
