@@ -18,6 +18,13 @@ pull:
     id: clone-step
     repository: https://github.com/ekenheim/arxiv-pipeline
     branch: master
+- prefect.deployments.steps.run_shell_script:
+    id: upgrade-prefect
+    directory: "{{ clone-step.directory }}"
+    script: |
+      echo "Upgrading Prefect to match server version..."
+      python -m pip install --upgrade "prefect>=3.6.4,<4.0.0"
+    stream_output: true
 - prefect.deployments.steps.pip_install_requirements:
     directory: "{{ clone-step.directory }}"
     requirements_file: requirements.txt
@@ -30,6 +37,8 @@ pull:
       python -m pip install .
       echo "Verifying installation..."
       python -c "import arxiv_pipeline; print(f'Successfully imported arxiv_pipeline from {arxiv_pipeline.__file__}')"
+      echo "Verifying Prefect version..."
+      python -c "import prefect; print(f'Prefect version: {prefect.__version__}')"
     stream_output: true
 
 # the deployments section allows you to provide configuration for deploying flows
