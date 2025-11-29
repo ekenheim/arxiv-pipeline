@@ -25,8 +25,11 @@ pull:
     id: install-package
     directory: "{{ clone-step.directory }}"
     script: |
+      echo "Installing arxiv-pipeline package..."
       python -m pip install --upgrade pip setuptools wheel
       python -m pip install .
+      echo "Verifying installation..."
+      python -c "import arxiv_pipeline; print(f'Successfully imported arxiv_pipeline from {arxiv_pipeline.__file__}')"
     stream_output: true
 
 # the deployments section allows you to provide configuration for deploying flows
@@ -50,9 +53,7 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables:
-      env:
-        PYTHONPATH: "{{ clone-step.directory }}/src"
+    job_variables: {}
   schedules: []
 
 - name: daily-pipeline
@@ -75,9 +76,7 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables:
-      env:
-        PYTHONPATH: "{{ clone-step.directory }}/src"
+    job_variables: {}
   schedules: []
 
 - name: training-pipeline
@@ -94,7 +93,5 @@ deployments:
   work_pool:
     name: default
     work_queue_name: null
-    job_variables:
-      env:
-        PYTHONPATH: "{{ clone-step.directory }}/src"
+    job_variables: {}
   schedules: []
